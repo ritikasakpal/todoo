@@ -1,46 +1,58 @@
 import React from "react";
-import {NavLink} from "react-router-dom"
-import {db } from "../firebase";
-import "./Header.css"
-import {Blob} from "./Blob"
-    
+import { NavLink } from "react-router-dom";
+import "./Header.css";
+import { connect } from "react-redux";
+import Blob from "./Blob";
 
-export class Done extends React.Component{
-    constructor(){
-        super();
-        this.state={
-          alll:[],
-        }
-        this.titleref=React.createRef()
-        this.discref=React.createRef()
-        this.renderAll()
-      }
-       renderAll= () =>{
-        var Allrender=[]
-        var i=1;
-        db.collection("tasks").get().then(data=>{
-          data.docs.forEach(task=>{
-              if(task.data().status=="done"){
-            Allrender.push(<Blob key={i} no={i} action={this.renderAll.bind(this)} title={task.data().title} disc={task.data().disc} status={task.data().status} />)}
-            i++
-          })
-          this.setState({alll:Allrender})
-        })
-       
-      }
-    
-      render() {
+class Done extends React.Component {
+  constructor() {
+    super();
+    this.titleref = React.createRef();
+    this.discref = React.createRef();
+  }
+  renderAll = () => {
+    var Allrender = [];
+    Allrender = this.props.all.map(task => {
+      if (task.status === "done") {
         return (
-          <div>
-   <div className="header" >
-        <NavLink to="/all" className="tabs ">ALL</NavLink>
-        <div className="tabs selected">DONE</div>
-        <NavLink to="/active" className="tabs ">ACTIVE</NavLink>
-          </div>
-    {this.state.alll}
-   
-    </div>
+          <Blob
+            key={task.id}
+            no={task.id}
+            action={this.renderAll.bind(this)}
+            title={task.title}
+            disc={task.disc}
+            status={task.status}
+          />
         );
       }
+    });
+    return Allrender;
+  };
 
+  render() {
+    return (
+      <div>
+        <div className="header">
+          <NavLink to="/all" className="tabs ">
+            ALL
+          </NavLink>
+          <div className="tabs selected">DONE</div>
+          <NavLink to="/active" className="tabs ">
+            ACTIVE
+          </NavLink>
+        </div>
+        {this.renderAll()}
+      </div>
+    );
+  }
 }
+
+function mapStateToProps(state) {
+  return {
+    all: state.all
+  };
+}
+export default connect(
+  mapStateToProps,
+  {}
+)(Done);
