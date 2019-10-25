@@ -13,6 +13,6 @@ var config = {
   firebase.initializeApp(config);
 
   var db = firebase.firestore();
-  const settings = {/* your settings... */ timestampsInSnapshots: true};
-  db.settings(settings);
+//   const settings = {/* your settings... */ timestampsInSnapshots: true};
+//   db.settings(settings);
   export {db,firebase}
